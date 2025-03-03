@@ -2,6 +2,7 @@ import 'dotenv/config.js';
 import express from 'express';
 import cors from 'cors';
 
+import userRoutes from './routes/user-routes.js'
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+
+app.use(userRoutes)
 
 app.get('/', (req, res) => {
     return res.send('If you see this message. API IS WORKING!!')
