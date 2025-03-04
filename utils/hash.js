@@ -1,10 +1,9 @@
 import bcrypt from "bcrypt";
 
-/**
- * Hash a password before storing it in the database.
- * @param {string} password - The plain text password.
- * @returns {Promise<string>} Hashed password.
- */
+
+
+
+ 
 export const hashPassword = async (password) => {
   const saltRounds = 10; // Number of salt rounds (higher = more secure but slower)
   return await bcrypt.hash(password, saltRounds);
