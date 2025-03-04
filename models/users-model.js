@@ -1,34 +1,31 @@
-import { poolPromise } from '../utils/utils.js'
+import { poolPromise } from "../utils/utils.js";
 
-const executeQuery = async (query, inputParameters = []) => {
-  const pool = await poolPromise;
-  const request = pool.request();
-
-  inputParameters.forEach((param) => {
-    request.input(param.name, param.value);
-  });
-
+export const executeQuery = async (query, inputParameters = []) => {
   try {
+    const pool = await poolPromise;
+    const request = pool.request();
+
+    inputParameters.forEach((param) => {
+      request.input(param.name, param.value);
+    });
+
     const result = await request.query(query);
-    return result.recordset;
+    return result.recordset || []; 
   } catch (err) {
-    console.log("executeQuery Error:", err);
-    throw err;
+    console.error("executeQuery Error:", err);
+    throw err; 
   }
 };
 
 export const getUsers = async () => {
-    try {
-        const inputParameters = [
-            {name: "id", value: 1}
-        ]
+  try {
+    const query = "SELECT * FROM users";
+    const result = await executeQuery(query); 
 
-        const query = 'SELECT * FROM users'
-
-        const result = executeQuery(query, [])
-
-        return result
-    } catch (err) {
-        console.log("getUsers: ", err)
-    }
+    return result || []; 
+  } catch (err) {
+    console.error("getUsers Error:", err);
+    return []; 
+  }
 };
+
