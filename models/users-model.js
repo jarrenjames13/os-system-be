@@ -68,6 +68,7 @@ export const verifyUser = async (EMPID) => {
     const inputParameters = [{ name: "EMPID", value: EMPID }];
 
     const existUserQuery = "SELECT * FROM users WHERE EMPID = @EMPID";
+    
     const userResult = await executeQuery(existUserQuery, inputParameters);
 
     if (userResult.length > 0) {
@@ -80,3 +81,25 @@ export const verifyUser = async (EMPID) => {
     throw new Error("Database error occurred.");
   }
 };
+export const checkEmpidExists = async (EMPID) => {
+  const query = "SELECT EMPID FROM users WHERE EMPID = @EMPID";
+  const result = await executeQuery(query, [{ name: "EMPID", value: EMPID }]);
+  return result.length > 0; // Returns true if EMPID exists
+};
+
+export const VerifyLogin = async (EMPID, isLogin, result) =>{
+  const inputParameters = [
+    { name: 'EMPID', value: empid }
+];
+
+const existUser_query = 'SELECT users.EMPID, users.PASSWORD FROM users WHERE users.EMPID = @EMPID ' 
+    'GROUP BY users.EMPID, users.PASSWORD, users.AUTHORITY';
+
+const existUser_query_result = await executeQuery(existUser_query, inputParameters);
+
+if (existUser_query_result.length !== 0) {
+    if (isLogIn) {
+        return result(null, { user_details: existUser_query_result[0] });
+    }
+}
+}
