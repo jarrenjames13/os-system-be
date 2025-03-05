@@ -11,26 +11,27 @@ export const getUsers_Cont = async (req, res) => {
   }
 };
 
-export const postUsers_Cont = async (req, res) => {
+export const postUsers_Cont = (req, res) => {
   try {
-    const { EMPID, FNAME, LNAME, EMAIL, PASSWORD, STATUS, AUTHORITY, DEPARTMENT } = req.body;
+    const { EMPID, FNAME, LNAME, EMAIL, PASSWORD,  DEPARTMENT } = req.body;
 
-    
-    const data = { EMPID, FNAME, LNAME, EMAIL, PASSWORD, STATUS, AUTHORITY, DEPARTMENT }
+    if (!PASSWORD) {
+      return res.status(400).json({ error: "Password is required" });
+    }
 
-    await insertUser((data, result => {
-      if(result.status){
-        res.status(201).json(result);
-        return
+    const data = { EMPID, FNAME, LNAME, EMAIL, PASSWORD,  DEPARTMENT };
+
+
+    insertUser(data, (err, result) => {
+      if (err || !result.status) {
+        return res.status(400).json(result);
       }
-      
-      res.status(400).json(result)
-    }))
 
-    
+      res.status(201).json(result);
+    });
+
   } catch (err) {
     console.error("postUsers_Cont Error:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-

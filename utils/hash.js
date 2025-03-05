@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 
  
 export const hashPassword = async (password) => {
-  const saltRounds = 10; // Number of salt rounds (higher = more secure but slower)
+  const saltRounds = 10; 
   return await bcrypt.hash(password, saltRounds);
 };
 

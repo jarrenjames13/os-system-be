@@ -31,10 +31,11 @@ export const getUsers = async () => {
   }
 };
 
-export const insertUser = async (data, result) => {
-  const hashedPassword = await hashPassword(data.PASSWORD);
-  const DATE_CREATED = getCurrentTimeUTC8();
+export const insertUser = async (data, callback) => {
   try {
+    const hashedPassword = await hashPassword(data.PASSWORD);
+    const DATE_CREATED = getCurrentTimeUTC8();
+
     const query = `
         INSERT INTO users (EMPID, FNAME, LNAME, EMAIL, PASSWORD, DATE_CREATED, STATUS, AUTHORITY, DEPARTMENT) 
         VALUES (@EMPID, @FNAME, @LNAME, @EMAIL, @PASSWORD, @DATE_CREATED, @STATUS, @AUTHORITY, @DEPARTMENT)
@@ -47,15 +48,35 @@ export const insertUser = async (data, result) => {
       { name: "EMAIL", value: data.EMAIL },
       { name: "PASSWORD", value: hashedPassword },
       { name: "DATE_CREATED", value: DATE_CREATED },
-      { name: "STATUS", value: data.STATUS },
-      { name: "AUTHORITY", value: data.AUTHORITY },
+      { name: "STATUS", value: "ACTIVE" },
+      { name: "AUTHORITY", value: 3 },
       { name: "DEPARTMENT", value: data.DEPARTMENT },
     ];
 
     await executeQuery(query, inputParameters);
-    return({ message: "User inserted successfully", status: true });
+
+    callback(null, { message: "User inserted successfully", status: true });
   } catch (error) {
-    console.log("insertUser: ", err);
-    return result({message: "FAILED" , status: false})
+    console.error("insertUser Error:", error);
+
+    callback(error, { message: "FAILED", status: false });
+  }
+};
+
+export const verifyUser = async (EMPID) => {
+  try {
+    const inputParameters = [{ name: "EMPID", value: EMPID }];
+
+    const existUserQuery = "SELECT * FROM users WHERE EMPID = @EMPID";
+    const userResult = await executeQuery(existUserQuery, inputParameters);
+
+    if (userResult.length > 0) {
+      return { error: "Account is already registered", status: false };
+    }
+
+    return { message: "Account is available", status: true };
+  } catch (error) {
+    console.error("Error in verifyUser:", error);
+    throw new Error("Database error occurred.");
   }
 };
