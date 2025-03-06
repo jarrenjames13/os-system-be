@@ -71,13 +71,14 @@ export const checkEmpidExists = async (EMPID) => {
 
 export const verifyLogin = async (EMPID) => {
   try {
-    const inputParameters=[
-      {name:'EMPID', value:EMPID},
-    ]
-    const loginQuery = "SELECT * FROM USERS WHERE EMPID = @EMPID"
-    const result = await executeQuery(loginQuery, inputParameters)
-    
-    return result.length > 0 ? result[0]:null;
-  } catch (error) {}
-  throw new Error(`Database error: ${error.message}`);
+    const inputParameters = [{ name: "EMPID", value: EMPID }];
+    const loginQuery = "SELECT * FROM USERS WHERE EMPID = @EMPID";
+
+    const result = await executeQuery(loginQuery, inputParameters);
+
+    return result.length > 0 ? result[0] : null;
+  } catch (error) {
+    console.error("Database query failed:", error);
+    return null; // Ensure the function always returns something
+  }
 };
