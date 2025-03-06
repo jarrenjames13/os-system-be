@@ -91,7 +91,7 @@ export const loginUser_cont = async (req, res) => {
     const token = jwt.sign(
       {
         auth: user.AUTHORITY,
-        id: user.EMPID,
+        EMPID: user.EMPID,
         name: user.FNAME,
         maxAge: maxAge,
       },
@@ -116,24 +116,23 @@ export const refreshToken = async (req, res) => {
   const { token } = req.body;
 
   const decoded = jwtDecode(token);
-  await verifyLogin(decoded.EMPID, async (result) => {
-    try {
-      const expiresIn = "5d";
-      const maxAge = 432000;
-      const token = jwt.sign(
-        {
-          auth: user.AUTHORITY,
-          id: user.EMPID,
-          name: user.FNAME,
-          maxAge: maxAge,
-        },
-        secret,
-        { algorithm: "HS256", expiresIn }
-      );
-      res.send({ token });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).send({ msg: "Internal Server Error" });
-    }
-  });
+  const user = await verifyLogin(decoded.EMPID);
+  try {
+    const expiresIn = "5d";
+    const maxAge = 432000;
+    const token = jwt.sign(
+      {
+        auth: user.AUTHORITY,
+        EMPID: user.EMPID,
+        name: user.FNAME,
+        maxAge: maxAge,
+      },
+      secret,
+      { algorithm: "HS256", expiresIn }
+    );
+    res.send({ token });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ msg: "Internal Server Error" });
+  }
 };
