@@ -82,3 +82,14 @@ export const verifyLogin = async (EMPID) => {
     return null; // Ensure the function always returns something
   }
 };
+export const GetCompanies = async () => {
+  try {
+    const query = "SELECT * FROM companies";
+    const result = await executeQuery(query);
+
+    return result || [];
+  } catch (err) {
+    console.error("getUsers Error:", err);
+    return [];
+  }
+};

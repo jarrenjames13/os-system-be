@@ -14,9 +14,19 @@ export const getUsers_Cont = async (req, res) => {
   try {
     const users = await executeQuery("SELECT * FROM users");
     res.status(200).json(users);
-  } catch (err) {
+  } catch (err) { 
     console.error("getUsers_Cont Error:", err);
     res.status(500).json({ error: "Failed to fetch users" });
+  }
+};
+
+export const getCompanies_Cont = async (req, res) => {
+  try {
+    const companies = await executeQuery("SELECT * FROM companies");
+    res.status(200).json(companies);
+  } catch (err) {
+    console.error("getCompanies_Cont Error:", err);
+    res.status(500).json({ error: "Failed to fetch companies" });
   }
 };
 
