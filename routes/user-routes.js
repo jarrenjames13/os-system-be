@@ -1,5 +1,6 @@
 import "dotenv/config.js";
 import express from "express";
+import { getInventory_Cont, getPrices_Cont } from "../controllers/mldi/inventory-controller.js";
 import {
   checkEmpidAvailability,
   getCompanies_Cont,
@@ -7,6 +8,7 @@ import {
   loginUser_cont,
   postUsers_Cont,
   refreshToken,
+  
 } from "../controllers/user-controller.js";
 
 
@@ -18,5 +20,6 @@ router.post("/check-empid", checkEmpidAvailability);
 router.post("/login", loginUser_cont);
 router.post(`/refresh`, refreshToken);
 router.get(`/companies`, getCompanies_Cont )
-
+router.get(`/inventory`, getInventory_Cont )
+router.get(`/uom`, getPrices_Cont )
 export default router;

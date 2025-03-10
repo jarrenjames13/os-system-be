@@ -1,93 +1,56 @@
 import sql from "mssql";
-import { poolPromise } from "../utils/dashl/utils.js";
+import { poolPromise } from "../utils/utils.js";
 
 const tables = [
+    {
+        name: "companies",
+        columns: [
+            { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false },
+            { name: "COMPANY_NAME", type: "nvarchar(MAX)", isNullable: false },
+            { name: "COMPANY", type: "nvarchar(MAX)", isNullable: false },
+        ],
+    },
     // {
     //     name: "users",
     //     columns: [
-    //         { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false },
-    //         { name: "username", type: "nvarchar(MAX)", isNullable: false },
-    //         { name: "password", type: "nvarchar(MAX)", isNullable: false },
-    //         { name: "name", type: "nvarchar(MAX)", isNullable: false },
-    //         { name: "auth", type: "int", isNullable: false },
-    //         { name: "slsper_id", type: "nvarchar(MAX)", isNullable: false },
+    //       { name: "ID", type: "int identity(1,1) PRIMARY KEY", isNullable: false },
+    //       { name: "EMPID", type: "nvarchar(MAX)", isNullable: false },
+    //       { name: "FNAME", type: "nvarchar(MAX)", isNullable: false },
+    //       { name: "LNAME", type: "nvarchar(MAX)", isNullable: false },
+    //       { name: "EMAIL", type: "nvarchar(MAX)", isNullable: false },
+    //       { name: "PASSWORD", type: "nvarchar(MAX)", isNullable: false },
+    //       { name: "DATE_CREATED", type: "nvarchar(MAX)", isNullable: false },
+    //       { name: "STATUS", type: "nvarchar(MAX)", isNullable: false },
+    //       { name: "AUTHORITY", type: "int", isNullable: false },
+    //       { name: "DEPARTMENT", type: "nvarchar(MAX)", isNullable: false },
     //     ],
-    // },
-    {
-        name: "orders_cart",
+    //   },
+{
+        name: "cart",
         columns: [
             { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false },
-            { name: "date", type: "nvarchar(MAX)", isNullable: false },
-            { name: "slsper_id", type: "nvarchar(MAX)", isNullable: false },
-            { name: "cust_id", type: "nvarchar(MAX)", isNullable: false },
-            { name: "cust_name", type: "nvarchar(MAX)", isNullable: false },
-            { name: "company", type: "nvarchar(MAX)", isNullable: false },
-            { name: "shipto_id", type: "nvarchar(MAX)", isNullable: false },
-            { name: "ship_name", type: "nvarchar(MAX)", isNullable: false },
-            { name: "price_class", type: "nvarchar(MAX)", isNullable: false },
-            { name: "principal", type: "nvarchar(MAX)", isNullable: false },
-            { name: "invt_id", type: "nvarchar(MAX)", isNullable: false },
-            { name: "item_name", type: "nvarchar(MAX)", isNullable: false },
-            { name: "uom", type: "nvarchar(MAX)", isNullable: false },
-            { name: "qty", type: "int", isNullable: false },
-            { name: "price", type: "float", isNullable: false },
-            { name: "total", type: "float", isNullable: false },
-        ],
-    },
-    {
-        name: "orders",
-        columns: [
-            { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false },
-            { name: "date", type: "nvarchar(MAX)", isNullable: false },
-            { name: "slsper_id", type: "nvarchar(MAX)", isNullable: false },
-            { name: "cust_id", type: "nvarchar(MAX)", isNullable: false },
-            { name: "cust_name", type: "nvarchar(MAX)", isNullable: false },
-            { name: "company", type: "nvarchar(MAX)", isNullable: false },
-            { name: "shipto_id", type: "nvarchar(MAX)", isNullable: false },
-            { name: "ship_name", type: "nvarchar(MAX)", isNullable: false },
-            { name: "ship_add1", type: "nvarchar(MAX)", isNullable: false },
-            { name: "ship_city", type: "nvarchar(MAX)", isNullable: false },
-            { name: "price_class", type: "nvarchar(MAX)", isNullable: false },
-            { name: "total", type: "float", isNullable: false },
-            { name: "ref_num", type: "nvarchar(MAX)", isNullable: false },
-            { name: "status", type: "nvarchar(MAX)", isNullable: false },
-            { name: "remarks", type: "nvarchar(MAX)", isNullable: true },
-            { name: "is_exported", type: "int", isNullable: true },
-        ],
-    },
-    {
-        name: "orders_items",
-        columns: [
-            { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false },
-            { name: "date", type: "nvarchar(MAX)", isNullable: false },
-            { name: "slsper_id", type: "nvarchar(MAX)", isNullable: false },
-            { name: "cust_id", type: "nvarchar(MAX)", isNullable: false },
-            { name: "cust_name", type: "nvarchar(MAX)", isNullable: false },
-            { name: "company", type: "nvarchar(MAX)", isNullable: false },
-            { name: "shipto_id", type: "nvarchar(MAX)", isNullable: false },
-            { name: "ship_name", type: "nvarchar(MAX)", isNullable: false },
-            { name: "price_class", type: "nvarchar(MAX)", isNullable: false },
-            { name: "principal", type: "nvarchar(MAX)", isNullable: false },
-            { name: "invt_id", type: "nvarchar(MAX)", isNullable: false },
-            { name: "item_name", type: "nvarchar(MAX)", isNullable: false },
-            { name: "uom", type: "nvarchar(MAX)", isNullable: false },
-            { name: "qty", type: "int", isNullable: false },
-            { name: "price", type: "float", isNullable: false },
-            { name: "total", type: "float", isNullable: false },
-            { name: "ref_num", type: "nvarchar(MAX)", isNullable: true },
-        ],
-    },
+            {   name: "date", type: "datetime", isNullable: false },
+            {   name: "user_id", type: "nvarchar(MAX)", isNullable: false },
+            {   name: "company", type: "nvarchar(MAX)", isNullable: false },
+            {   name: "invt_id", type: "nvarchar(MAX)", isNullable: false },
+            {   name: "item_name", type: "nvarchar(MAX)", isNullable: false },
+            {   name: "uom", type: "nvarchar(MAX)", isNullable: false },
+            {   name: "qty", type: "int", isNullable: false },
+            {   name: "ref_num", type: "nvarchar(MAX)", isNullable: false },
+            {   name: "status", type: "nvarchar(MAX)", isNullable: false },
+        ]
+}
 ];
 
 const views = [
-            {
-                name: "orders_items_disc",
-                query: `SELECT     oi.id, oi.date, oi.slsper_id, oi.cust_id, oi.cust_name, oi.company, oi.shipto_id, oi.ship_name, oi.price_class, oi.principal, oi.invt_id, oi.item_name, oi.uom, oi.qty, oi.price, oi.total, oi.ref_num, 
-                      xdh.TotDisc AS tot_disc, inv.ProdMgrID AS prodmgr_id
-FROM         dbo.orders_items AS oi LEFT OUTER JOIN
-                      solomon.MLDIAPP.dbo.Inventory AS inv ON oi.invt_id = inv.InvtID LEFT OUTER JOIN
-                      solomon.MLDIAPP.dbo.xDiscMatrixHeader AS xdh ON oi.principal = xdh.Principal AND oi.cust_id = xdh.CustID AND xdh.SubClass = inv.ProdMgrID`,
-            },
+//     {
+//         name: "orders_items_disc",
+//         query: `SELECT     oi.id, oi.date, oi.slsper_id, oi.cust_id, oi.cust_name, oi.company, oi.shipto_id, oi.ship_name, oi.price_class, oi.principal, oi.invt_id, oi.item_name, oi.uom, oi.qty, oi.price, oi.total, oi.ref_num, 
+//                       xdh.TotDisc AS tot_disc, inv.ProdMgrID AS prodmgr_id
+// FROM         dbo.orders_items AS oi LEFT OUTER JOIN
+//                       solomon.MLDIAPP.dbo.Inventory AS inv ON oi.invt_id = inv.InvtID LEFT OUTER JOIN
+//                       solomon.MLDIAPP.dbo.xDiscMatrixHeader AS xdh ON oi.principal = xdh.Principal AND oi.cust_id = xdh.CustID AND xdh.SubClass = inv.ProdMgrID`,
+//     },
 ];
 
 // Function to check if a table exists
@@ -192,8 +155,7 @@ const doesViewExist = async (viewName) => {
     }
 };
 
-
-//Create tables
+// Create tables
 tables.forEach(async (table) => {
     await createTableIfNotExists(table.name, table.columns);
 });
@@ -202,7 +164,6 @@ tables.forEach(async (table) => {
 views.forEach(async (view) => {
     await createViewIfNotExists(view.name, view.query);
 });
-
 
 // Close the connection pool
 sql.close();

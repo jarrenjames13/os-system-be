@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
-    
+    "dev": "nodemon index.js",
+    "migrate": "node -r dotenv/config schema/db-migrate.js",
+    "insert": "node -r dotenv/config schema/dynamic-data.js"
   },
   "keywords": [],
   "author": "",
