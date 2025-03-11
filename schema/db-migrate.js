@@ -2,14 +2,14 @@ import sql from "mssql";
 import { poolPromise } from "../utils/utils.js";
 
 const tables = [
-    {
-        name: "companies",
-        columns: [
-            { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false },
-            { name: "COMPANY_NAME", type: "nvarchar(MAX)", isNullable: false },
-            { name: "COMPANY", type: "nvarchar(MAX)", isNullable: false },
-        ],
-    },
+    // {
+    //     name: "companies",
+    //     columns: [
+    //         { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false },
+    //         { name: "COMPANY_NAME", type: "nvarchar(MAX)", isNullable: false },
+    //         { name: "COMPANY", type: "nvarchar(MAX)", isNullable: false },
+    //     ],
+    // },
     // {
     //     name: "users",
     //     columns: [
@@ -28,16 +28,13 @@ const tables = [
 {
         name: "cart",
         columns: [
-            { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false },
-            {   name: "date", type: "datetime", isNullable: false },
-            {   name: "user_id", type: "nvarchar(MAX)", isNullable: false },
-            {   name: "company", type: "nvarchar(MAX)", isNullable: false },
-            {   name: "invt_id", type: "nvarchar(MAX)", isNullable: false },
-            {   name: "item_name", type: "nvarchar(MAX)", isNullable: false },
-            {   name: "uom", type: "nvarchar(MAX)", isNullable: false },
-            {   name: "qty", type: "int", isNullable: false },
-            {   name: "ref_num", type: "nvarchar(MAX)", isNullable: false },
-            {   name: "status", type: "nvarchar(MAX)", isNullable: false },
+            { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false }, // ✅ Auto-increment ID
+            { name: "date", type: "datetime", isNullable: false, default: "GETDATE()" }, // ✅ Default timestamp
+            { name: "empId", type: "nvarchar(50)", isNullable: false }, // ✅ Match EMPID from token
+            { name: "invt_id", type: "nvarchar(50)", isNullable: false }, // ✅ Match inventory ID
+            { name: "descr", type: "nvarchar(255)", isNullable: false }, // ✅ Match item description
+            { name: "uom", type: "nvarchar(50)", isNullable: false }, // ✅ Match unit of measure
+            { name: "quantity", type: "int", isNullable: false, default: 0 }, // ✅ Default quantity
         ]
 }
 ];
