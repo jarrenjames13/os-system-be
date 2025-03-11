@@ -14,7 +14,7 @@ export const getUsers_Cont = async (req, res) => {
   try {
     const users = await executeQuery("SELECT * FROM users");
     res.status(200).json(users);
-  } catch (err) { 
+  } catch (err) {
     console.error("getUsers_Cont Error:", err);
     res.status(500).json({ error: "Failed to fetch users" });
   }
@@ -100,9 +100,11 @@ export const loginUser_cont = async (req, res) => {
     const maxAge = 432000;
     const token = jwt.sign(
       {
-        auth: user.AUTHORITY,
+        AUTH: user.AUTHORITY,
         EMPID: user.EMPID,
-        name: user.FNAME,
+        NAME: user.FNAME,
+        LNAME: user.LNAME,
+        EMAIL: user.EMAIL,
         maxAge: maxAge,
       },
       secret,
@@ -132,9 +134,12 @@ export const refreshToken = async (req, res) => {
     const maxAge = 432000;
     const token = jwt.sign(
       {
-        auth: user.AUTHORITY,
+        AUTH: user.AUTHORITY,
         EMPID: user.EMPID,
-        name: user.FNAME,
+        NAME: user.FNAME,
+        LNAME: user.LNAME,
+        EMAIL: user.EMAIL,
+        DEPARTMENT: user.DEPARTMENT,
         maxAge: maxAge,
       },
       secret,
