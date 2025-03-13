@@ -28,7 +28,7 @@ export const getInventory = async (company) => {
             LTRIM(RTRIM(ClassID)) AS class_id FROM a_inventory_salesprice WHERE CatalogNbr IS NOT NULL AND ClassID 
             IN (SELECT LTRIM(RTRIM(ClassID)) FROM ProductClass WHERE DfltInvtSub LIKE '1%' AND ClassID NOT IN ('COC','CPI','EPDI','GFI','GFSI','GNPI','GOO','HIM','MJN','NKC','OLE','PCPPI','PRO','RBH','SCA','SMPC','SYM','THA','UNB')) 
             AND CatalogNbr = 'osa' `;
-    } else {
+    } else if(company === "RDI"){
       query = `
             SELECT DISTINCT LTRIM(RTRIM(CatalogNbr)) AS catalog_nbr, LTRIM(RTRIM(InvtID)) AS invt_id, LTRIM(RTRIM(Descr)) AS descr, 
             LTRIM(RTRIM(ClassID)) AS class_id FROM a_inventory_salesprice WHERE CatalogNbr IS NOT NULL AND ClassID 
