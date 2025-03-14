@@ -1,47 +1,57 @@
-// import { insertCartItem, getCartByEmpId, removeCartItem } from "../models/cart-model.js";
-// import moment from "moment";
+import { insertCartItem, getCartByEmpId,  } from "../models/cart-model.js";
+//  
+import moment from "moment";
 
-// // ✅ Controller to Add Item to Cart
-// export const addToCart = async (req, res) => {
-//   try {
-//     const { empId, invt_id, descr, uom, quantity } = req.body;
+// ✅ Controller to Add Item to Cart
+export const addToCart = async (req, res) => {
+    try {
+      const { empId, invt_id, descr, uom, quantity } = req.body;
+  
+      if (!empId || !invt_id || !descr || !uom || !quantity) {
+        return res.status(400).json({ success: false, message: "Missing required fields" });
+      }
+  
+      // Check if the item is already in the cart
+      const cartItems = await getCartByEmpId(empId);
+      const itemExists = cartItems.some(item => item.invt_id === invt_id && item.uom === uom);
+  
+      if (itemExists) {
+        return res.status(200).json({ success: false, message: "Item is already in cart" }); 
+      }
+  
+      const date = moment().format("YYYY-MM-DD HH:mm:ss");
+  
+      // ✅ Use Model Function for Insertion
+      const result = await insertCartItem({ empId, invt_id, descr, uom, quantity, date });
+  
+      if (result.success) {
+        return res.status(201).json({ success: true, message: "Item added to cart" });
+      } else {
+        throw new Error("Failed to insert cart item.");
+      }
+    } catch (error) {
+      console.error("Error adding item to cart:", error);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  };
 
-//     if (!empId || !invt_id || !descr || !uom || !quantity  ) {
-//       return res.status(400).json({ success: false, message: "Missing required fields" });
-//     }
+// ✅ Controller to Fetch Cart Items by EMPID
+export const getCartItems = async (req, res) => {
+  try {
+console.log(req.query);
+    const { empId } = req.query;
 
-//     const date = moment().format("YYYY-MM-DD HH:mm:ss");
+    if (!empId) {
+      return res.status(400).json({ success: false, message: "Missing EMPID" });
+    }
 
-//     // ✅ Use Model Function for Insertion
-//     const result = await insertCartItem({ empId, invt_id, descr, uom, quantity,  date });
-
-//     if (result.success) {
-//       res.status(201).json({ success: true, message: "Item added to cart" });
-//     } else {
-//       throw new Error("Failed to insert cart item.");
-//     }
-//   } catch (error) {
-//     console.error("Error adding item to cart:", error);
-//     res.status(500).json({ success: false, message: "Server error" });
-//   }
-// };
-
-// // ✅ Controller to Fetch Cart Items by EMPID
-// export const getCartItems = async (req, res) => {
-//   try {
-//     const { empId } = req.query;
-
-//     if (!empId) {
-//       return res.status(400).json({ success: false, message: "Missing EMPID" });
-//     }
-
-//     const cartItems = await getCartByEmpId(empId);
-//     res.status(200).json(cartItems);
-//   } catch (error) {
-//     console.error("Error fetching cart items:", error);
-//     res.status(500).json({ success: false, message: "Server error" });
-//   }
-// };
+    const cartItems = await getCartByEmpId(empId);
+    res.status(200).json(cartItems);
+  } catch (error) {
+    console.error("Error fetching cart items:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 
 
 
