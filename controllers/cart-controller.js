@@ -38,7 +38,7 @@ export const addToCart = async (req, res) => {
 // ✅ Controller to Fetch Cart Items by EMPID
 export const getCartItems = async (req, res) => {
   try {
-console.log(req.query);
+
     const { empId } = req.query;
 
     if (!empId) {
