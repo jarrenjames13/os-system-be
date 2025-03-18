@@ -25,17 +25,31 @@ const tables = [
     //       { name: "DEPARTMENT", type: "nvarchar(MAX)", isNullable: false },
     //     ],
     //   },
+// {
+//         name: "cart",
+//         columns: [
+//             { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false }, // ✅ Auto-increment ID
+//             { name: "date", type: "datetime", isNullable: false, default: "GETDATE()" }, // ✅ Default timestamp
+//             { name: "empId", type: "nvarchar(50)", isNullable: false }, // ✅ Match EMPID from token
+//             { name: "invt_id", type: "nvarchar(50)", isNullable: false }, // ✅ Match inventory ID
+//             { name: "descr", type: "nvarchar(255)", isNullable: false }, // ✅ Match item description
+//             { name: "uom", type: "nvarchar(50)", isNullable: false }, // ✅ Match unit of measure
+//             { name: "quantity", type: "int", isNullable: false, default: 0 }, // ✅ Default quantity
+//         ]
+// },
 {
-        name: "cart",
-        columns: [
-            { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false }, // ✅ Auto-increment ID
-            { name: "date", type: "datetime", isNullable: false, default: "GETDATE()" }, // ✅ Default timestamp
-            { name: "empId", type: "nvarchar(50)", isNullable: false }, // ✅ Match EMPID from token
-            { name: "invt_id", type: "nvarchar(50)", isNullable: false }, // ✅ Match inventory ID
-            { name: "descr", type: "nvarchar(255)", isNullable: false }, // ✅ Match item description
-            { name: "uom", type: "nvarchar(50)", isNullable: false }, // ✅ Match unit of measure
-            { name: "quantity", type: "int", isNullable: false, default: 0 }, // ✅ Default quantity
-        ]
+name:"orders",
+columns: [
+    { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false }, // ✅ Auto-increment ID
+    { name: "date", type: "datetime", isNullable: false, default: "GETDATE()" }, // ✅ Default timestamp
+    { name: "empId", type: "nvarchar(50)", isNullable: false }, // ✅ Match EMPID from token
+    { name: "invt_id", type: "nvarchar(50)", isNullable: false }, // ✅ Match inventory ID
+    { name: "descr", type: "nvarchar(255)", isNullable: false }, // ✅ Match item description
+    { name: "uom", type: "nvarchar(50)", isNullable: false }, // ✅ Match unit of measure
+    { name: "quantity", type: "int", isNullable: false, default: 0 }, // ✅ Default quantity
+    {name: "status", type: "nvarchar(50)", isNullable: false},
+    {name:"refNum", type:"nvarchar(50)", isNullable:false},
+]
 }
 ];
 

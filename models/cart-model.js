@@ -69,14 +69,25 @@ export const getCartByEmpId = async (empId) => {
   }
 };
 
-// export const removeCartItem = async (empId, invt_id, uom) => {
-//   const pool = await poolPromise;
-//   return await pool
-//     .request()
-//     .input("empId", sql.NVarChar, empId)
-//     .input("invt_id", sql.NVarChar, invt_id)
-//     .input("uom", sql.NVarChar, uom)
-//     .query(
-//       "DELETE FROM cart WHERE empId = @empId AND invt_id = @invt_id AND uom = @uom"
-//     );
-// };
+export const removeCartItem = async (empId, invt_id, uom) => {
+  const pool = await poolPromise;
+  return await pool
+    .request()
+    .input("empId", sql.NVarChar, empId)
+    .input("invt_id", sql.NVarChar, invt_id)
+    .input("uom", sql.NVarChar, uom)
+    .query(
+      "DELETE FROM cart WHERE empId = @empId AND invt_id = @invt_id AND uom = @uom"
+    );
+};
+
+export const removeCartAll= async (empId) => {
+  const pool = await poolPromise;
+  return await pool
+  .request()
+  .input ("empId", sql.NVarChar, empId)
+  .query (
+    "DELETE FROM cart WHERE empId = @empId"
+  )
+
+}

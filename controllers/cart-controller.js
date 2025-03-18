@@ -1,4 +1,4 @@
-import { insertCartItem, getCartByEmpId,  } from "../models/cart-model.js";
+import { insertCartItem, getCartByEmpId, removeCartItem, removeCartAll,  } from "../models/cart-model.js";
 //  
 import moment from "moment";
 
@@ -55,24 +55,68 @@ export const getCartItems = async (req, res) => {
 
 
 
-// export const deleteCartItem = async (req, res) => {
-//   try {
-//     const { empId, invt_id, uom } = req.query;
+export const deleteCartItem = async (req, res) => {
+  try {
+    const { empId, invt_id, uom } = req.query;
 
-//     if (!empId || !invt_id || !uom) {
-//       return res.status(400).json({ success: false, message: "Missing required fields" });
-//     }
+    if (!empId || !invt_id || !uom) {
+      return res.status(400).json({ success: false, message: "Missing required fields" });
+    }
 
-//     const result = await removeCartItem(empId, invt_id, uom);
+    const result = await removeCartItem(empId, invt_id, uom);
     
-//     if (result.rowsAffected[0] > 0) {
-//       res.status(200).json({ success: true, message: "Item removed from cart" });
-//     } else {
-//       res.status(404).json({ success: false, message: "Item not found in cart" });
-//     }
-//   } catch (error) {
-//     console.error("Error removing cart item:", error);
-//     res.status(500).json({ success: false, message: "Server error" });
-//   }
-// };
+    if (result.rowsAffected[0] > 0) {
+      res.status(200).json({ success: true, message: "Item removed from cart" });
+    } else {
+      res.status(404).json({ success: false, message: "Item not found in cart" });
+    }
+  } catch (error) {
+    console.error("Error removing cart item:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 
+export const deleteCartAll = async (req, res) => {
+  try {
+    const { empId } = req.query;
+    if (!empId) {
+      return res.status(400).json({ success: false, message: "Missing EmpId" });
+    }
+
+    const result = await removeCartAll(empId);
+
+    if (result.rowsAffected[0] > 0) {
+      res.status(200).json({ success: true, message: "Item removed from cart" });
+    } else {
+      res.status(404).json({ success: false, message: "Item not found in cart" });
+    }
+  } catch (error) {
+    console.error("Error removing cart item:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
+import { checkoutCart } from "../models/orders-model";
+
+export const HandleCheckout = async (req, res) => {
+    try {
+      const { empId, selectedItems } = req.body;
+  
+      if (!empId || !selectedItems || selectedItems.length === 0) {
+        return res.status(400).json({ success: false, message: "Invalid checkout request." });
+      }
+  
+      // Execute checkout process
+      const result = await checkoutCart(empId, selectedItems);
+  
+      if (result.success) {
+        return res.status(201).json({ success: true, message: "Checkout successful.", refNum: result.refNum });
+      } else {
+        throw new Error("Failed to complete checkout.");
+      }
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      res.status(500).json({ success: false, message: "Server error." });
+    }
+  };

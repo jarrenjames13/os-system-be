@@ -4,7 +4,7 @@ import cors from 'cors';
 
 import userRoutes from './routes/user-routes.js'
 import cartRoutes from './routes/cart-routes.js'
-
+import orderRoutes from './routes/order-routes.js'
 const app = express();
 
 const PORT = process.env.PORT;
@@ -20,6 +20,7 @@ app.use(express.urlencoded({extended:true}));
 
 app.use(userRoutes)
 app.use(cartRoutes)
+app.use(orderRoutes)
 
 app.get('/', (req, res) => {
     return res.send('If you see this message. API IS WORKING!!')

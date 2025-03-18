@@ -81,7 +81,7 @@ export const loginUser_cont = async (req, res) => {
     const user = await verifyLogin(EMPID);
 
     if (!user) {
-      return res.status().json({
+      return res.status(201).json({
         success: false,
         message: "User not found",
       });
@@ -105,6 +105,7 @@ export const loginUser_cont = async (req, res) => {
         NAME: user.FNAME,
         LNAME: user.LNAME,
         EMAIL: user.EMAIL,
+        DEPARTMENT: user.DEPARTMENT,
         maxAge: maxAge,
       },
       secret,
