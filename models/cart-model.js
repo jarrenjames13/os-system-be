@@ -21,7 +21,6 @@ export const executeQuery = async (query, inputParameters = []) => {
 };
 
 // ✅ Insert Item into Cart
-
 export const insertCartItem = async (cartItem) => {
   try {
     const { invt_id, descr, uom, quantity, empId } = cartItem;
@@ -31,19 +30,18 @@ export const insertCartItem = async (cartItem) => {
     }
 
     const params = [
-        { name: "invt_id", value: invt_id },
-        { name: "descr", value: descr },
-        { name: "uom", value: uom },
-        { name: "quantity", value: quantity },
-        { name: "empId", value: empId },
-        { name: "date", value: moment().tz("Asia/Manila").format("YYYY-MM-DD HH:mm:ss") }
+      { name: "invt_id", value: invt_id },
+      { name: "descr", value: descr },
+      { name: "uom", value: uom },
+      { name: "quantity", value: quantity },
+      { name: "empId", value: empId },
+      { name: "date", value: moment().tz("Asia/Manila").format("YYYY-MM-DD HH:mm:ss") },
     ];
 
     const query = `INSERT INTO cart (invt_id, descr, uom, quantity, empId, date) 
-          VALUES (@invt_id, @descr, @uom, @quantity, @empId, @date) `;
+                   VALUES (@invt_id, @descr, @uom, @quantity, @empId, @date)`;
 
     await executeQuery(query, params);
-
     return { success: true, message: "Item added to cart" };
   } catch (error) {
     console.error("Error inserting cart item:", error);
@@ -56,38 +54,44 @@ export const getCartByEmpId = async (empId) => {
   try {
     if (!empId) throw new Error("EMPID is required");
 
-    const pool = await poolPromise;
-    const result = await pool
-      .request()
-      .input("empId", sql.NVarChar, empId)
-      .query(`SELECT * FROM cart WHERE empId = @empId`);
+    const query = `SELECT * FROM cart WHERE empId = @empId`;
+    const params = [{ name: "empId", value: empId }];
 
-    return result.recordset;
+    return await executeQuery(query, params);
   } catch (error) {
     console.error("Error fetching cart items:", error);
     throw error;
   }
 };
 
+// ✅ Remove a Specific Cart Item
 export const removeCartItem = async (empId, invt_id, uom) => {
-  const pool = await poolPromise;
-  return await pool
-    .request()
-    .input("empId", sql.NVarChar, empId)
-    .input("invt_id", sql.NVarChar, invt_id)
-    .input("uom", sql.NVarChar, uom)
-    .query(
-      "DELETE FROM cart WHERE empId = @empId AND invt_id = @invt_id AND uom = @uom"
-    );
+  try {
+    const query = `DELETE FROM cart WHERE empId = @empId AND invt_id = @invt_id AND uom = @uom`;
+    const params = [
+      { name: "empId", value: empId },
+      { name: "invt_id", value: invt_id },
+      { name: "uom", value: uom },
+    ];
+
+    await executeQuery(query, params);
+    return { success: true, message: "Item removed from cart" };
+  } catch (error) {
+    console.error("Error removing cart item:", error);
+    throw error;
+  }
 };
 
-export const removeCartAll= async (empId) => {
-  const pool = await poolPromise;
-  return await pool
-  .request()
-  .input ("empId", sql.NVarChar, empId)
-  .query (
-    "DELETE FROM cart WHERE empId = @empId"
-  )
+// ✅ Remove All Cart Items for a Specific EMPID
+export const removeCartAll = async (empId) => {
+  try {
+    const query = `DELETE FROM cart WHERE empId = @empId`;
+    const params = [{ name: "empId", value: empId }];
 
-}
+    await executeQuery(query, params);
+    return { success: true, message: "All items removed from cart" };
+  } catch (error) {
+    console.error("Error removing all cart items:", error);
+    throw error;
+  }
+};

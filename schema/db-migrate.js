@@ -50,7 +50,18 @@ columns: [
     {name: "status", type: "nvarchar(50)", isNullable: false},
     {name:"refNum", type:"nvarchar(50)", isNullable:false},
 ]
-}
+},
+{
+    name:"order_lines",
+    columns: [
+        { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false },
+        { name: "empId", type: "nvarchar(50)", isNullable: false }, 
+        { name: "date", type: "datetime", isNullable: false, default: "GETDATE()" }, 
+        { name: "total_items", type: "int", isNullable: false, default: 0 },
+        {name: "status", type: "nvarchar(50)", isNullable: false},
+        {name:"refNum", type:"nvarchar(50)", isNullable:false},
+    ]
+    }   
 ];
 
 const views = [

@@ -1,6 +1,8 @@
-import { checkoutCart } from "../models/orders-model";
+import { checkoutCart, getOrderLines, GetOrders } from "../models/orders-model.js";
 
-export const HandleCheckout = async (req, res) => {
+
+export const handleCheckout_Cont = async (req, res) => {
+  
     try {
       const { empId, selectedItems } = req.body;
   
@@ -19,5 +21,37 @@ export const HandleCheckout = async (req, res) => {
     } catch (error) {
       console.error("Error during checkout:", error);
       res.status(500).json({ success: false, message: "Server error." });
+    }
+  };
+
+  export const getOrders_Cont = async (req, res) => {
+    try {
+  
+      const { refNum } = req.query;
+  
+      if (!refNum) {
+        return res.status(200).json({ success: false, message: "Missing Reference Number" });
+      }
+  
+      const orderItems = await GetOrders(refNum);
+      res.status(200).json(orderItems);
+    } catch (error) {
+      console.error("Error fetching order:", error);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  };
+
+  export const getOrderLines_Cont = async (req, res) => {
+    try {
+      const { empId } = req.query;
+      if (!empId) {
+        return res.status(200).json({ success: false, message: "Missing EMPID" });
+      }
+  
+      const orderLines = await getOrderLines(empId);
+      res.status(200).json({ success: true, orderLines });
+    } catch (error) {
+      console.error("Error fetching order lines:", error);
+      res.status(500).json({ success: false, message: "Server error" });
     }
   };
