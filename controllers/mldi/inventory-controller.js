@@ -14,14 +14,15 @@ export const getInventory_Cont = async (req, res) => {
 };
 
 export const getPrices_Cont = async (req, res) => {
+    console.log("invt_id", req.query);
     try {
-        const { invt_id } = req.query
+        const { invt_id, company } = req.query;
 
-        const prices = await getPrices(invt_id)
+        const prices = await getPrices(invt_id, company);
 
-        res.json(prices)
+        res.json(prices);
     } catch (err) {
-        console.log(err)
-        throw err
+        console.log(err);
+        res.status(500).send('Internal Server Error');
     }
 };

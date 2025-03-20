@@ -7,6 +7,7 @@ import {
   loginUser_cont,
   postUsers_Cont,
   refreshToken,
+  UpdatePassword_Cont,
   
 } from "../controllers/user-controller.js";
 
@@ -19,4 +20,5 @@ router.post("/check-empid", checkEmpidAvailability);
 router.post("/login", loginUser_cont);
 router.post(`/refresh`, refreshToken);
 router.get(`/companies`, getCompanies_Cont )
+router.post(`/changepass`, UpdatePassword_Cont)
 export default router;

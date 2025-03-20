@@ -1,4 +1,4 @@
-import { insertCartItem, getCartByEmpId, removeCartItem, removeCartAll,  } from "../models/cart-model.js";
+import { insertCartItem, getCartByEmpId, removeCartItem, removeCartAll, UpdateCart,  } from "../models/cart-model.js";
 import { checkoutCart } from "../models/orders-model.js";
 //  
 import moment from "moment";
@@ -65,7 +65,7 @@ export const deleteCartItem = async (req, res) => {
     }
 
     const result = await removeCartItem(empId, invt_id, uom);
-    
+
     if (result.rowsAffected[0] > 0) {
       res.status(200).json({ success: true, message: "Item removed from cart" });
     } else {
@@ -97,6 +97,25 @@ export const deleteCartAll = async (req, res) => {
   }
 };
 
+export const UpdateCart_Cont = async (req,res)=>{
+  console.log("Update Cart Controller", req.body);
+  try {
+    const{empId, invt_id, uom, quantity} = req.body;
+    if(!empId || !invt_id || !uom || !quantity){
+      return res.status(400).json({success: false, message: "Missing required fields"});
+    }
+    const result = await UpdateCart(empId, invt_id, uom, quantity);
+    // result is recordset, grab updatedCount
+    if (result[0] && result[0].updatedCount > 0) {
+      return res.status(200).json({ success: true, message: "Item quantity updated" });
+    } else {
+      return res.status(404).json({ success: false, message: "Item not found in cart" });
+    }
+  }catch (error){
+    console.error ("Error updating cart item:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+}
 
 
 

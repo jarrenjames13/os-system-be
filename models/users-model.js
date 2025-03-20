@@ -12,7 +12,7 @@ export const executeQuery = async (query, inputParameters = []) => {
     });
 
     const result = await request.query(query);
-    return result.recordset || [];
+    return result; // Return the full result
   } catch (err) {
     console.error("executeQuery Error:", err);
     throw err;
@@ -53,12 +53,15 @@ export const insertUser = async (data, callback) => {
       { name: "DEPARTMENT", value: data.DEPARTMENT },
     ];
 
-    await executeQuery(query, inputParameters);
+    const result = await executeQuery(query, inputParameters);
 
-    callback(null, { message: "User inserted successfully", status: true });
+    if (result.rowsAffected[0] > 0) {
+      callback(null, { message: "User inserted successfully", status: true });
+    } else {
+      callback(new Error("Failed to insert user"), { message: "FAILED", status: false });
+    }
   } catch (error) {
     console.error("insertUser Error:", error);
-
     callback(error, { message: "FAILED", status: false });
   }
 };
@@ -66,7 +69,7 @@ export const insertUser = async (data, callback) => {
 export const checkEmpidExists = async (EMPID) => {
   const query = "SELECT EMPID FROM users WHERE EMPID = @EMPID";
   const result = await executeQuery(query, [{ name: "EMPID", value: EMPID }]);
-  return result.length > 0; // Returns true if EMPID exists
+  return result.recordset.length > 0; // Returns true if EMPID exists
 };
 
 export const verifyLogin = async (EMPID) => {
@@ -76,20 +79,37 @@ export const verifyLogin = async (EMPID) => {
 
     const result = await executeQuery(loginQuery, inputParameters);
 
-    return result.length > 0 ? result[0] : null;
+    return result.recordset.length > 0 ? result.recordset[0] : null;
   } catch (error) {
     console.error("Database query failed:", error);
     return null; // Ensure the function always returns something
   }
 };
+
 export const GetCompanies = async () => {
   try {
     const query = "SELECT * FROM companies";
     const result = await executeQuery(query);
 
-    return result || [];
+    return result.recordset || [];
   } catch (err) {
     console.error("getUsers Error:", err);
     return [];
+  }
+};
+
+export const UpdatePassword = async (EMPID, newPassword) => {
+  try {
+    const hashedPassword = await hashPassword(newPassword);
+    const query = "UPDATE users SET PASSWORD = @PASSWORD WHERE EMPID = @EMPID";
+    const inputParameters = [
+      { name: "EMPID", value: EMPID },
+      { name: "PASSWORD", value: hashedPassword },
+    ];
+    const result = await executeQuery(query, inputParameters);
+    return result.rowsAffected[0] > 0;
+  } catch (err) {
+    console.error("UpdatePassword Error:", err);
+    return false;
   }
 };

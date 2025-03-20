@@ -84,34 +84,25 @@ export const checkoutCart = async (empId, selectedItems) => {
     const refNum = await generateRefNum(empId);
     const date = moment().tz("Asia/Manila").format("YYYY-MM-DD HH:mm:ss");
     const totalItems = selectedItems.length;
-    const status = "Pending"; // Default status for new orders
+    const status = "Pending";
 
-    // Insert into `order_lines` table
-    await executeQuery(
-      `INSERT INTO order_lines (date,empId, refNum, total_items, status) VALUES (@date, @empId, @refNum, @total_items, @status)`,
-      [
-        { name: "empId", value: empId },
-        { name: "date", value: date },
-        { name: "refNum", value: refNum },
-        { name: "total_items", value: totalItems },
-        { name: "status", value: status },
-      ]
-    );
-
-    // Insert into `orders` table
+    // Insert everything into the single 'orders' table
+    // (Include total_items for the entire order)
     const insertQueries = selectedItems.map((item) => {
       return executeQuery(
-        `INSERT INTO orders (date, empId, invt_id, descr, uom, quantity, status, refNum) 
-         VALUES (@date, @empId, @invt_id, @descr, @uom, @quantity, @status, @refNum)`,
+        `INSERT INTO orders
+         (date, empId, refNum, total_items, status, invt_id, descr, uom, quantity)
+         VALUES (@date, @empId, @refNum, @total_items, @status, @invt_id, @descr, @uom, @quantity)`,
         [
           { name: "date", value: date },
           { name: "empId", value: empId },
+          { name: "refNum", value: refNum },
+          { name: "total_items", value: totalItems },
+          { name: "status", value: status },
           { name: "invt_id", value: item.invt_id },
           { name: "descr", value: item.descr },
           { name: "uom", value: item.uom },
           { name: "quantity", value: item.quantity },
-          { name: "status", value: status },
-          { name: "refNum", value: refNum },
         ]
       );
     });
@@ -143,7 +134,7 @@ export const GetOrders = async (refNum) => {
   try {
     // Basic validation
     if (!refNum) {
-      throw new Error("Employee ID is required");
+      throw new Error("Reference Number Required");
     }
     
     // Add filtering by empId and sort by date descending
@@ -166,16 +157,16 @@ export const GetOrders = async (refNum) => {
 
 export const getOrderLines = async (empId) => {
   try {
+    
     const query = `
-      SELECT date, refNum, total_items, status 
-      FROM order_lines 
-      WHERE refNum IN (SELECT refNum FROM orders WHERE empId = @empId)
+      SELECT DISTINCT date, refNum, total_items, status
+      FROM orders
+      WHERE empId = @empId
       ORDER BY date DESC
     `;
-
     return await executeQuery(query, [{ name: "empId", value: empId }]);
   } catch (error) {
     console.error("Error fetching order lines:", error);
     throw error;
   }
-};  
+};

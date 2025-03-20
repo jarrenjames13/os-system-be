@@ -13,7 +13,7 @@ export const executeQuery = async (query, inputParameters = []) => {
     });
 
     const result = await request.query(query);
-    return result.recordset || [];
+    return result;
   } catch (err) {
     console.error("executeQuery Error:", err);
     throw err;
@@ -57,7 +57,9 @@ export const getCartByEmpId = async (empId) => {
     const query = `SELECT * FROM cart WHERE empId = @empId`;
     const params = [{ name: "empId", value: empId }];
 
-    return await executeQuery(query, params);
+    const result = await executeQuery(query, params);
+
+    return result?.recordset || [];
   } catch (error) {
     console.error("Error fetching cart items:", error);
     throw error;
@@ -67,15 +69,18 @@ export const getCartByEmpId = async (empId) => {
 // ✅ Remove a Specific Cart Item
 export const removeCartItem = async (empId, invt_id, uom) => {
   try {
-    const query = `DELETE FROM cart WHERE empId = @empId AND invt_id = @invt_id AND uom = @uom`;
+    const query = `
+      DELETE FROM cart
+      WHERE empId = @empId AND invt_id = @invt_id AND uom = @uom
+    `;
     const params = [
       { name: "empId", value: empId },
       { name: "invt_id", value: invt_id },
       { name: "uom", value: uom },
     ];
 
-    await executeQuery(query, params);
-    return { success: true, message: "Item removed from cart" };
+    // Return the full DB result
+    return await executeQuery(query, params);
   } catch (error) {
     console.error("Error removing cart item:", error);
     throw error;
@@ -88,10 +93,29 @@ export const removeCartAll = async (empId) => {
     const query = `DELETE FROM cart WHERE empId = @empId`;
     const params = [{ name: "empId", value: empId }];
 
-    await executeQuery(query, params);
-    return { success: true, message: "All items removed from cart" };
+  return await executeQuery(query, params);
+
   } catch (error) {
     console.error("Error removing all cart items:", error);
+    throw error;
+  }
+};
+
+export const UpdateCart = async (empId, invt_id, uom, quantity) => {
+  try {
+    const query = `
+      UPDATE cart
+      SET quantity = @quantity
+      WHERE empId = @empId AND invt_id = @invt_id AND uom = @uom
+    `;
+    const params = [
+      { name: "empId", value: empId },
+      { name: "invt_id", value: invt_id },
+      { name: "uom", value: uom },
+      { name: "quantity", value: quantity },
+    ];
+    return await executeQuery(query, params);
+  } catch (error) {
     throw error;
   }
 };

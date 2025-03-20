@@ -47,21 +47,22 @@ columns: [
     { name: "descr", type: "nvarchar(255)", isNullable: false }, // ✅ Match item description
     { name: "uom", type: "nvarchar(50)", isNullable: false }, // ✅ Match unit of measure
     { name: "quantity", type: "int", isNullable: false, default: 0 }, // ✅ Default quantity
+    { name: "total_items", type: "int", isNullable: false, default: 0 },
     {name: "status", type: "nvarchar(50)", isNullable: false},
     {name:"refNum", type:"nvarchar(50)", isNullable:false},
 ]
 },
-{
-    name:"order_lines",
-    columns: [
-        { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false },
-        { name: "empId", type: "nvarchar(50)", isNullable: false }, 
-        { name: "date", type: "datetime", isNullable: false, default: "GETDATE()" }, 
-        { name: "total_items", type: "int", isNullable: false, default: 0 },
-        {name: "status", type: "nvarchar(50)", isNullable: false},
-        {name:"refNum", type:"nvarchar(50)", isNullable:false},
-    ]
-    }   
+// {
+//     name:"order_lines",
+//     columns: [
+//         { name: "id", type: "int identity(1,1) PRIMARY KEY", isNullable: false },
+//         { name: "empId", type: "nvarchar(50)", isNullable: false }, 
+//         { name: "date", type: "datetime", isNullable: false, default: "GETDATE()" }, 
+//         { name: "total_items", type: "int", isNullable: false, default: 0 },
+//         {name: "status", type: "nvarchar(50)", isNullable: false},
+//         {name:"refNum", type:"nvarchar(50)", isNullable:false},
+//     ]
+//     }   
 ];
 
 const views = [
