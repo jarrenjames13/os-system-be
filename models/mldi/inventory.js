@@ -27,9 +27,8 @@ export const getInventory = async (company) => {
     switch (company) {
       case "CMDI":
         query = `
-          SELECT LTRIM(RTRIM(InvtID)) AS invt_id, LTRIM(RTRIM(prod_desc)) AS descr, 
-          LTRIM(RTRIM(ClassID)) AS class_id FROM a_inventory WHERE   ClassID 
-          IN (SELECT LTRIM(RTRIM(ClassID)) FROM ProductClass )`;
+          SELECT DISTINCT LTRIM(RTRIM(InvtID)) AS invt_id, LTRIM(RTRIM(Descr)) AS descr, LTRIM(RTRIM(ClassID)) AS class_id
+          FROM a_GetItemPrice WHERE CatalogNbr IS NOT NULL `;
         poolPromise = poolPromiseCMDI;
         break;
       case "MLDI":
@@ -51,7 +50,7 @@ export const getInventory = async (company) => {
       case "MDI":
         query = `
           SELECT DISTINCT LTRIM(RTRIM(InvtID)) AS invt_id, LTRIM(RTRIM(Descr)) AS descr, LTRIM(RTRIM(SelectFld2)) AS class_id
-          FROM a_inventory_salesprice WHERE CatalogNbr IS NOT NULL `;
+          FROM a_inventory_salesprice WHERE CatalogNbr IS NOT NULL AND CatalogNbr = 'CP1'`;
         poolPromise = poolPromiseMDI;
         break;
       default:
@@ -76,8 +75,9 @@ export const getPrices = async (invt_id, company) => {
 
     switch (company) {
       case "CMDI":
-        query = `SELECT LTRIM(RTRIM(CatalogNbr)) AS catalog_nbr, LTRIM(RTRIM(InvtID)) as invt_id, LTRIM(RTRIM(SlsUnit)) as uom, 
-         LTRIM(RTRIM(DiscPrice)) as price from a_inventory_ WHERE CatalogNbr = 'OSA' AND InvtID = @invt_id AND CatalogNbr IS NOT NULL`;
+        query = `SELECT LTRIM(RTRIM(InvtID)) as invt_id, LTRIM(RTRIM(SlsUnit)) as uom, 
+         LTRIM(RTRIM(DiscPrice)) as price from a_GetItemPrice WHERE InvtID = @invt_id AND CatalogNbr IS NOT NULL`;
+         poolPromise = poolPromiseCMDI;
         break;
       case "MLDI":
       case "RDI":
@@ -86,8 +86,8 @@ export const getPrices = async (invt_id, company) => {
         poolPromise = poolPromiseMLDI;
         break;
       case "MDI":
-        query = `SELECT  LTRIM(RTRIM(InvtID)) as invt_id, LTRIM(RTRIM(SlsUnit)) as uom, 
-         LTRIM(RTRIM(DiscPrice)) as price from a_inventory_salesprice WHERE InvtID = @invt_id AND CatalogNbr IS NOT NULL`;
+        query = `SELECT DISTINCT  LTRIM(RTRIM(SlsUnit)) as uom 
+         from a_inventory_salesprice WHERE InvtID = @invt_id AND CatalogNbr IS NOT NULL`;
         poolPromise = poolPromiseMDI;
         break;
       default:

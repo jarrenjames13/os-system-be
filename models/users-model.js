@@ -79,13 +79,17 @@ export const verifyLogin = async (EMPID) => {
 
     const result = await executeQuery(loginQuery, inputParameters);
 
-    return result.recordset.length > 0 ? result.recordset[0] : null;
+    if (result.recordset.length > 0) {
+      return result.recordset[0];
+    } else {
+      console.error(`User with EMPID ${EMPID} not found`);
+      return null;
+    }
   } catch (error) {
     console.error("Database query failed:", error);
     return null; // Ensure the function always returns something
   }
 };
-
 export const GetCompanies = async () => {
   try {
     const query = "SELECT * FROM companies";

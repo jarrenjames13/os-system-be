@@ -170,3 +170,88 @@ export const getOrderLines = async (empId) => {
     throw error;
   }
 };
+
+export const getAllOrders = async () => {
+  try {
+    const query = "SELECT * FROM orders";
+    const result = await executeQuery(query);
+
+    return result || [];
+  } catch (err) {
+    console.error("getOrders Error:", err);
+    return [];
+  }
+}
+
+export const getAllOrderLines = async () => {
+  try {
+    const query = "SELECT DISTINCT date, refNum, total_items, status FROM orders ORDER BY date DESC";
+    return await executeQuery(query);
+  } catch (error) {
+    console.error("Error fetching order lines:", error);
+    return [];
+  }
+}
+
+export const UpdateOrderStatus = async (refNum, status) => {
+  try {
+    const query = `
+      UPDATE orders
+      SET status = @status
+      WHERE refNum = @refNum
+    `;
+    await executeQuery(query, [
+      { name: "status", value: status },
+      { name: "refNum", value: refNum }
+    ]);
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    throw error;
+  }
+};
+
+export const getOrderlinebyStatus = async (status) => {
+  try {
+    const query = `
+      SELECT DISTINCT date, refNum, total_items, status FROM orders ORDER BY date DESC WHERE status = @status`;
+    return await executeQuery(query, [{ name: "status", value: status }]);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    throw error;
+  }
+};
+
+export const getOrdersByStatus = async (statuses) => {
+  try {
+    const query = `
+      SELECT DISTINCT date, refNum, total_items, status 
+      FROM orders 
+      WHERE status IN (${statuses.map((_, i) => `@status${i}`).join(", ")})
+      ORDER BY date DESC
+    `;
+    const inputParameters = statuses.map((status, i) => ({ name: `status${i}`, value: status }));
+    return await executeQuery(query, inputParameters);
+  } catch (error) {
+    console.error("Error fetching orders by status:", error);
+    throw error;
+  }
+};
+
+export const getOrdersByStatusAndEmpId = async (statuses, empId) => {
+  try {
+    const query = `
+      SELECT DISTINCT date, refNum, total_items, status 
+      FROM orders 
+      WHERE status IN (${statuses.map((_, i) => `@status${i}`).join(", ")})
+      AND empId = @empId
+      ORDER BY date DESC
+    `;
+    const inputParameters = statuses.map((status, i) => ({ name: `status${i}`, value: status }));
+    inputParameters.push({ name: "empId", value: empId });
+    return await executeQuery(query, inputParameters);
+  } catch (error) {
+    console.error("Error fetching orders by status and empId:", error);
+    throw error;
+  }
+};

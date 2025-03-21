@@ -128,12 +128,17 @@ export const loginUser_cont = async (req, res) => {
 export const refreshToken = async (req, res) => {
   const { token } = req.body;
 
-  const decoded = jwtDecode(token);
-  const user = await verifyLogin(decoded.EMPID);
   try {
+    const decoded = jwtDecode(token);
+    const user = await verifyLogin(decoded.EMPID);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     const expiresIn = "5d";
     const maxAge = 432000;
-    const token = jwt.sign(
+    const newToken = jwt.sign(
       {
         AUTH: user.AUTHORITY,
         EMPID: user.EMPID,
@@ -146,13 +151,13 @@ export const refreshToken = async (req, res) => {
       secret,
       { algorithm: "HS256", expiresIn }
     );
-    res.send({ token });
+
+    res.send({ token: newToken });
   } catch (error) {
-    console.error(error);
+    console.error("Error refreshing token:", error);
     return res.status(500).send({ msg: "Internal Server Error" });
   }
 };
-
 export const UpdatePassword_Cont = async (req, res) => {
   try {
     const { EMPID, oldPassword, newPassword } = req.body;
